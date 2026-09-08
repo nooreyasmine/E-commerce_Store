@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwiftCart - E-Commerce Store</title>
+  <!-- Google Fonts & FontAwesome for icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#/" class="logo"><i class="fa-solid fa-bag-shopping"></i> SwiftCart</a>
+      
+      <nav class="nav-links">
+        <a href="#/"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="#/wishlist" class="nav-icon-btn">
+          <i class="fa-solid fa-heart"></i> Wishlist
+          <span id="wishlist-count" class="badge">0</span>
+        </a>
+        <a href="#/cart" class="nav-icon-btn">
+          <i class="fa-solid fa-cart-shopping"></i> Cart
+          <span id="cart-count" class="badge">0</span>
+        </a>
+        <a href="#/orders" id="nav-orders" class="hidden"><i class="fa-solid fa-box-open"></i> Orders</a>
+        <span id="user-display" class="user-status"></span>
+        <a href="#/login" id="auth-btn" class="btn btn-sm btn-outline">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main View Area (Dynamic Content loaded here) -->
+  <main id="app" class="main-content"></main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <p>&copy; 2026 SwiftCart. Built for GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
