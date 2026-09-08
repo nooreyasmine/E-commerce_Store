@@ -17,7 +17,7 @@ const PRODUCTS = [
   },
   {
     id: 3, name: "Sleek Ultrabook Laptop", category: "Electronics", price: 1299.00,
-    image: "https://images.unsplash.com/photo-1496181130204-755241524eab?w=500",
+    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=500",
     description: "Work on the go with lightweight performance powered by robust architectures.",
     features: ["16GB LPDDR5 RAM & 512GB NVMe SSD", "High-performance Multi-Core processor", "All-day lightweight chassis battery life"],
     deliveryTime: "3-4 business days"
@@ -188,6 +188,18 @@ const PRODUCTS = [
 
 const CATEGORIES = ["Electronics", "Fashion", "Home-Decor", "Beauty", "Sports"];
 
+// Helper to match standard FREE FontAwesome 6 Icons with categories
+function getCategoryIcon(category) {
+  switch (category) {
+    case "Electronics": return "fa-laptop";
+    case "Fashion": return "fa-shirt";
+    case "Home-Decor": return "fa-couch";
+    case "Beauty": return "fa-spa"; // FIXED: fa-spa represents beauty/spa and is 100% free
+    case "Sports": return "fa-dumbbell";
+    default: return "fa-box";
+  }
+}
+
 // --- 2. LOCAL STORAGE / STATE ENGINE ---
 let state = {
   currentUser: JSON.parse(localStorage.getItem('currentUser')) || null,
@@ -276,20 +288,38 @@ function logoutUser(e) {
   router();
 }
 
-// --- 5. PAGE RENDERERS ---
+// --- 5. ETSY-STYLE SIDEBAR GENERATOR ---
+function getSidebarHTML(activeCategory = "") {
+  const categoriesHTML = CATEGORIES.map(cat => {
+    const icon = getCategoryIcon(cat);
+    const isActive = cat.toLowerCase() === activeCategory.toLowerCase() ? "active" : "";
+    return `
+      <a href="#/category/${cat}" class="sidebar-link ${isActive}">
+        <i class="fa-solid ${icon}"></i>
+        <span>${cat.replace('-', ' ')}</span>
+      </a>
+    `;
+  }).join('');
+
+  return `
+    <aside class="sidebar">
+      <h3 class="sidebar-title">All Categories</h3>
+      <div class="sidebar-links-wrapper">
+        ${categoriesHTML}
+      </div>
+    </aside>
+  `;
+}
+
+// --- 6. PAGE RENDERERS ---
 
 // A. HOME VIEW
 function renderHomeView(container) {
   let catCards = CATEGORIES.map(cat => {
-    let iconClass = "fa-laptop"; // Default fallback icon
-    if (cat === "Fashion") iconClass = "fa-shirt";
-    if (cat === "Home-Decor") iconClass = "fa-couch";
-    if (cat === "Beauty") iconClass = "fa-sparkles";
-    if (cat === "Sports") iconClass = "fa-dumbbell";
-
+    const icon = getCategoryIcon(cat);
     return `
       <a href="#/category/${cat}" class="category-card">
-        <i class="fa-solid ${iconClass}"></i>
+        <i class="fa-solid ${icon}"></i>
         <h3>${cat.replace('-', ' ')}</h3>
       </a>
     `;
@@ -312,7 +342,7 @@ function renderHomeView(container) {
   `;
 }
 
-// B. CATEGORY VIEW (PLP)
+// B. CATEGORY VIEW (PLP) - WITH SIDEBAR
 function renderCategoryPage(categoryName, container) {
   const filtered = PRODUCTS.filter(p => p.category.toLowerCase() === categoryName.toLowerCase());
   
@@ -324,12 +354,19 @@ function renderCategoryPage(categoryName, container) {
   let productsHTML = filtered.map(p => renderProductCard(p)).join('');
 
   container.innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-      <h2 style="text-transform: capitalize;">Category: ${categoryName.replace('-', ' ')}</h2>
-      <a href="#/" class="btn btn-outline btn-sm"><i class="fa-solid fa-chevron-left"></i> All Categories</a>
-    </div>
-    <div class="product-grid">
-      ${productsHTML}
+    <div class="store-layout">
+      <!-- Sticky Etsy-inspired category navigation sidebar -->
+      ${getSidebarHTML(categoryName)}
+      
+      <div class="store-main">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+          <h2 style="text-transform: capitalize;"><i class="fa-solid ${getCategoryIcon(categoryName)}" style="color: var(--primary); margin-right: 10px;"></i>${categoryName.replace('-', ' ')}</h2>
+          <a href="#/" class="btn btn-outline btn-sm"><i class="fa-solid fa-chevron-left"></i> Home</a>
+        </div>
+        <div class="product-grid">
+          ${productsHTML}
+        </div>
+      </div>
     </div>
   `;
 }
@@ -358,7 +395,7 @@ function renderProductCard(product) {
   `;
 }
 
-// C. PRODUCT DESCRIPTION VIEW (PDP)
+// C. PRODUCT DESCRIPTION VIEW (PDP) - WITH SIDEBAR
 function renderProductPage(productId, container) {
   const product = PRODUCTS.find(p => p.id === productId);
   if (!product) {
@@ -373,38 +410,47 @@ function renderProductPage(productId, container) {
   let featuresListHTML = product.features.map(f => `<li>${f}</li>`).join('');
 
   container.innerHTML = `
-    <div style="margin-bottom: 2rem;">
-      <a href="#/category/${product.category}" class="btn btn-outline btn-sm"><i class="fa-solid fa-chevron-left"></i> Back to ${product.category}</a>
-    </div>
-    <div class="pdp-container">
-      <div>
-        <img src="${product.image}" alt="${product.name}" class="pdp-img">
-      </div>
-      <div class="pdp-details">
-        <span style="text-transform: uppercase; font-size: 0.8rem; font-weight:700; color: var(--primary); letter-spacing: 1px;">${product.category}</span>
-        <h2>${product.name}</h2>
-        <div class="pdp-price">$${product.price.toFixed(2)}</div>
-        <p style="line-height: 1.6; color: var(--text-muted);">${product.description}</p>
-        
-        <div class="pdp-meta">
-          <p><i class="fa-solid fa-truck" style="color:var(--primary); margin-right:5px;"></i> Est. Delivery: <strong>${product.deliveryTime}</strong></p>
-          <p><i class="fa-solid fa-circle-check" style="color:var(--success); margin-right:5px;"></i> Status: <strong>In Stock</strong></p>
-        </div>
+    <div class="store-layout">
+      <!-- Sticky Etsy-inspired category navigation sidebar is displayed here too -->
+      ${getSidebarHTML(product.category)}
 
+      <div class="store-main">
         <div style="margin-bottom: 2rem;">
-          <h4 style="margin-bottom: 0.5rem;">Product Highlights:</h4>
-          <ul class="features-list" style="padding-left:1.2rem; color: var(--text-muted); font-size:0.95rem;">
-            ${featuresListHTML}
-          </ul>
+          <a href="#/category/${product.category}" class="btn btn-outline btn-sm"><i class="fa-solid fa-chevron-left"></i> Back to ${product.category}</a>
         </div>
+        <div class="pdp-container">
+          <div>
+            <img src="${product.image}" alt="${product.name}" class="pdp-img">
+          </div>
+          <div class="pdp-details">
+            <span style="text-transform: uppercase; font-size: 0.8rem; font-weight:700; color: var(--primary); letter-spacing: 1px;">
+              <i class="fa-solid ${getCategoryIcon(product.category)}" style="margin-right: 5px;"></i> ${product.category}
+            </span>
+            <h2 style="margin-top:0.5rem;">${product.name}</h2>
+            <div class="pdp-price">$${product.price.toFixed(2)}</div>
+            <p style="line-height: 1.6; color: var(--text-muted); font-size:0.95rem;">${product.description}</p>
+            
+            <div class="pdp-meta">
+              <p><i class="fa-solid fa-truck" style="color:var(--primary); margin-right:5px;"></i> Est. Delivery: <strong>${product.deliveryTime}</strong></p>
+              <p><i class="fa-solid fa-circle-check" style="color:var(--success); margin-right:5px;"></i> Status: <strong>In Stock</strong></p>
+            </div>
 
-        <div style="display:flex; gap: 1rem;">
-          <button class="btn btn-primary" onclick="addToCart(${product.id})" style="flex-grow:1; justify-content:center;">
-            <i class="fa-solid fa-cart-plus"></i> Add to Cart
-          </button>
-          <button class="btn btn-outline" onclick="toggleWishlist(${product.id})" style="width: 50px; justify-content:center;">
-            <i class="${heartIcon}" style="${heartColor} font-size:1.2rem;"></i>
-          </button>
+            <div style="margin-bottom: 2rem;">
+              <h4 style="margin-bottom: 0.5rem;">Product Highlights:</h4>
+              <ul class="features-list" style="padding-left:1.2rem; color: var(--text-muted); font-size:0.95rem;">
+                ${featuresListHTML}
+              </ul>
+            </div>
+
+            <div style="display:flex; gap: 1rem;">
+              <button class="btn btn-primary" onclick="addToCart(${product.id})" style="flex-grow:1; justify-content:center;">
+                <i class="fa-solid fa-cart-plus"></i> Add to Cart
+              </button>
+              <button class="btn btn-outline" onclick="toggleWishlist(${product.id})" style="width: 50px; justify-content:center;">
+                <i class="${heartIcon}" style="${heartColor} font-size:1.2rem;"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -525,7 +571,6 @@ function renderWishlistPage(container) {
 // F. CHECKOUT VIEW
 function renderCheckoutPage(container) {
   if (!state.currentUser) {
-    // Redirect to login page and note they should log in
     alert("Please log in or sign up to complete your checkout.");
     window.location.hash = '#/login';
     return;
@@ -788,7 +833,7 @@ function renderSignupPage(container) {
 }
 
 
-// --- 6. USER ACTION HANDLERS ---
+// --- 7. USER ACTION HANDLERS ---
 
 // CART OPERATIONS
 window.addToCart = function(productId) {
