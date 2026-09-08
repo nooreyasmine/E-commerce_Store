@@ -148,10 +148,10 @@ const PRODUCTS = [
     deliveryTime: "2-3 business days"
   },
 
-  // CATEGORY: Sports
+// CATEGORY: Sports
   {
     id: 21, name: "Match Training Soccer Ball", category: "Sports", price: 30.00,
-    image: "https://images.unsplash.com/photo-1579952362874-46030290f1d5?w=500",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Football_P_526_0159.jpg/500px-Football_P_526_0159.jpg",
     description: "Reinforced panels balanced to maintain flight consistency.",
     features: ["Textured surface panels enhance direct ball touch", "Premium interior butyl bladder keeps internal pressure shape", "Standard FIFA-grade weight regulations"],
     deliveryTime: "2-3 business days"
