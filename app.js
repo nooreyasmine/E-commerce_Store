@@ -150,13 +150,6 @@ const PRODUCTS = [
 
 // CATEGORY: Sports
   {
-    id: 21, name: "Match Training Soccer Ball", category: "Sports", price: 30.00,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Football_P_526_0159.jpg/500px-Football_P_526_0159.jpg",
-    description: "Reinforced panels balanced to maintain flight consistency.",
-    features: ["Textured surface panels enhance direct ball touch", "Premium interior butyl bladder keeps internal pressure shape", "Standard FIFA-grade weight regulations"],
-    deliveryTime: "2-3 business days"
-  },
-  {
     id: 22, name: "Premium Eco Yoga Mat", category: "Sports", price: 45.00,
     image: "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500",
     description: "High-density cushioned platforms designed to prevent slipping.",
